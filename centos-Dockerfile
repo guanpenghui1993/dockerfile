@@ -23,12 +23,13 @@ RUN yum update -y glibc-common && mkdir -p $PACK_NAME /var/run/sshd
 RUN yum install -y sudo passwd openssh-server openssh-clients tar crontabs strace telnet perl libpcap bc patch dnsmasq unzip which net-tools vim wget curl tcpdump lsof
 
 #安装SSH远程服务 begin {
-RUN ssh-keygen -t rsa -f /etc/ssh/ssh_host_rsa_key
-RUN ssh-keygen -t dsa -f /etc/ssh/ssh_host_dsa_key
-RUN /bin/sed -i 's/.*session.*required.*pam_loginuid.so.*/session optional pam_loginuid.so/g' /etc/pam.d/sshd
+RUN ssh-keygen -t rsa -f /etc/ssh/ssh_host_rsa_key && ssh-keygen -t dsa -f /etc/ssh/ssh_host_dsa_key
+#RUN ssh-keygen -t dsa -f /etc/ssh/ssh_host_dsa_key
+RUN sed -i 's/.*session.*required.*pam_loginuid.so.*/session optional pam_loginuid.so/g' /etc/pam.d/sshd
 # } 安装SSH远程服务end
 
-RUN /bin/echo -e "LANG=\"en_US.UTF-8\"" > /etc/default/local
+#添加颜色跟编码
+RUN echo -e "LANG=\"en_US.UTF-8\"" > /etc/default/local && echo "alias ll='ls -l --color'" >> ~/.bashrc && echo "alias ls='ls --color'" >> ~/.bashrc && source ~/.bashrc
 
 #设置root密码
 RUN echo "root:${ROOT_PASSWORD}" | chpasswd
